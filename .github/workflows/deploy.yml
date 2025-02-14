@@ -12,9 +12,9 @@ jobs:
       - name: Run a command with OpenTelemetry
         uses: krzko/export-job-telemetry@v0.3.0
         with:
-          command: "echo 'Hello, OpenTelemetry!'"
-          service_name: "github-ci-pipeline"
-          endpoint: "http://18.224.135.200:4317"
+          otel-service-name: "github-ci-pipeline"
+          otel-exporter-otlp-endpoint: "http://18.224.135.200:4317"
+          otel-resource-attributes: "service.name=github-ci-pipeline"
 
       - name: Deploy Application
         run: |
