@@ -10,7 +10,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run a command with OpenTelemetry
-        uses: krzko/run-with-telemetry@v1
+        uses: krzko/export-job-telemetry@v0.3.0
         with:
           command: "echo 'Hello, OpenTelemetry!'"
           service_name: "github-ci-pipeline"
