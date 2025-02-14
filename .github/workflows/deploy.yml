@@ -22,6 +22,7 @@ jobs:
         uses: krzko/run-with-telemetry@v0.4.3
         with:
           otel-exporter-otlp-endpoint: ${{ env.otel-exporter-otlp-endpoint }}
+          otel-exporter-otlp-insecure: true
           otel-resource-attributes: ${{ env.otel-resource-attributes }}
           otel-service-name: ${{ env.otel-service-name }}
           step-name: Run a single-line command with telemetry
@@ -31,6 +32,7 @@ jobs:
         uses: krzko/run-with-telemetry@v0.4.3
         with:
           otel-exporter-otlp-endpoint: ${{ env.otel-exporter-otlp-endpoint }}
+          otel-exporter-otlp-insecure: true
           otel-resource-attributes: ${{ env.otel-resource-attributes }}
           otel-service-name: ${{ env.otel-service-name }}
           step-name: Run multi-line commands with telemetry
