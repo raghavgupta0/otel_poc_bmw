@@ -7,14 +7,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Run a command with OpenTelemetry
-        uses: krzko/export-job-telemetry@v0.3.0
+        uses: krzko/run-with-telemetry@v0.4.3
         with:
-          otel-service-name: "github-ci-pipeline"
-          otel-exporter-otlp-endpoint: "http://18.224.135.200:4317"
-          otel-resource-attributes: "service.name=github-ci-pipeline"
+          otel-service-name: "o11y.workflows"
+          otel-exporter-otlp-endpoint:: "http://18.224.135.200:4317"
+          otel-resource-attributes: "deployment.environent=dev,service.version=0.1.0"
+          step-name: Run a single-line command with telemetry
+          run: make build
 
       - name: Deploy Application
         run: |
