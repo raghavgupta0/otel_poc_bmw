@@ -1,44 +1,20 @@
-name: Build
+name: CI with OpenTelemetry
 
-on:
-  push:
-    branches:
-      - main
-
-permissions: read-all
-
-env:
-  otel-exporter-otlp-endpoint: 18.224.135.200:4317
-  otel-service-name: o11y.workflows
-  otel-resource-attributes: deployment.environent=dev,service.version=0.1.0
+on: [push]
 
 jobs:
-  build-stuff:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Run a single-line command with telemetry
-        uses: krzko/run-with-telemetry@v0.4.3
+      - name: Run a command with OpenTelemetry
+        uses: krzko/run-with-telemetry@v1
         with:
-          otel-exporter-otlp-endpoint: ${{ env.otel-exporter-otlp-endpoint }}
-          otel-exporter-otlp-insecure: true
-          otel-resource-attributes: ${{ env.otel-resource-attributes }}
-          otel-service-name: ${{ env.otel-service-name }}
-          step-name: Run a single-line command with telemetry
-          run: make build
-
-      - name: Run multi-line commands with telemetry
-        uses: krzko/run-with-telemetry@v0.4.3
-        with:
-          otel-exporter-otlp-endpoint: ${{ env.otel-exporter-otlp-endpoint }}
-          otel-exporter-otlp-insecure: true
-          otel-resource-attributes: ${{ env.otel-resource-attributes }}
-          otel-service-name: ${{ env.otel-service-name }}
-          step-name: Run multi-line commands with telemetry
-          run: |
-            cd src
-            make build
+          command: "echo 'Hello, OpenTelemetry!'"
+          service_name: "github-ci-pipeline"
+          endpoint: "http://18.224.135.200:4317"
 
       - name: Deploy Application
         run: |
