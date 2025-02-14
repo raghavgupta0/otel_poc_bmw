@@ -1,0 +1,42 @@
+name: Deploy to EC2 (Self-Hosted Runner)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install OpenTelemetry CLI
+        run: |
+          curl -L https://github.com/open-telemetry/opentelemetry-collector/releases/latest/download/otelcol-linux-amd64 -o otelcol
+          chmod +x otelcol
+
+      - name: Start OpenTelemetry Collector (Background)
+        run: ./otelcol &
+
+      - name: Export Metrics and Logs
+        run: |
+          curl -X POST http://18.116.82.45:4318/v1/logs -H "Content-Type: application/json" -d '{
+            "resource": { "attributes": [{ "key": "github.actions", "value": "pipeline-log" }] },
+            "logs": [{ "body": "Pipeline step completed", "severity_text": "INFO" }]
+          }'
+
+      - name: Install PM2
+        run: |
+          if ! command -v pm2 &> /dev/null; then
+            sudo npm install -g pm2
+          fi
+
+      - name: Deploy Application
+        run: |
+          cd ~/app
+          git pull origin main
+          npm install
+          pm2 restart my-app || pm2 start server.js --name my-app
