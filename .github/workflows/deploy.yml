@@ -10,13 +10,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check OpenTelemetry Connectivity
-        run: curl -v http://18.224.135.200:4317
+        run: curl -v http://18.224.135.200:4318
 
       - name: Run a command with OpenTelemetry
         uses: krzko/run-with-telemetry@v0.4.3
         with:
           otel-service-name: "o11y.workflows"
-          otel-exporter-otlp-endpoint: "http://18.224.135.200:4317"
+          otel-exporter-otlp-endpoint: "http://18.224.135.200:4318"
           otel-resource-attributes: "deployment.environent=dev,service.version=0.1.0"
           step-name: Run a single-line command with telemetry
           run: make build
