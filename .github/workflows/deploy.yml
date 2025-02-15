@@ -1,29 +1,33 @@
-name: CI with OpenTelemetry
-
-on: [push]
+name: Test and Build
+on: push:
+env:
+  honeycomb-url: https://ui.honeycomb.io/foo/environments/dev/datasets/github.com.foo/trace?trace_id=
+  otel-exporter-otlp-endpoint: 3.21.33.152:443
+  otel-service-name: o11y.workflows
+  otel-resource-attributes: deployment.environment=dev,service.version=0.1.0
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Run a command with OpenTelemetry
-        uses: krzko/run-with-telemetry@v0.4.3
+      - name: Setup telemetry
+        id: setup-telemetry
+        uses: krzko/setup-telemetry@v0.5.4
         with:
-          otel-service-name: "o11y.workflows"
-          otel-exporter-otlp-endpoint: 18.222.173.183
-          otel-exporter-otlp-insecure: "false"
-          otel-resource-attributes: "deployment.environment=dev,service.version=0.1.0"
-          step-name: "Build the project with telemetry"
-          run: npm run build  
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          job-as-parent: false
-
-      - name: Deploy Application
-        run: |
-          cd ~/app
-          git pull origin main
-          npm install
-          pm2 restart my-app || pm2 start server.js --name my-app
+          observability-backend-url: ${{ env.honeycomb-url }}
+      
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - run: # Your build or test commands here
+      
+      - name: Export job telemetry
+        if: always()
+        uses: krzko/export-job-telemetry@v0.3.0
+        with:
+          created-at: ${{ steps.setup-telemetry.outputs.created-at }}
+          job-status: ${{ job.status }}
+          job-name: ${{ steps.setup-telemetry.outputs.job-name }}
+          otel-exporter-otlp-endpoint: ${{ env.otel-exporter-otlp-endpoint }}
+          otel-resource-attributes: "foo.new_attribute=123,${{ env.otel-resource-attributes }}"
+          otel-service-name: ${{ env.otel-service-name }}
