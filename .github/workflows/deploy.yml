@@ -19,8 +19,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - run: # Your build or test commands here
-      
       - name: Export job telemetry
         if: always()
         uses: krzko/export-job-telemetry@v0.3.0
@@ -31,3 +29,10 @@ jobs:
           otel-exporter-otlp-endpoint: ${{ env.otel-exporter-otlp-endpoint }}
           otel-resource-attributes: "foo.new_attribute=123,${{ env.otel-resource-attributes }}"
           otel-service-name: ${{ env.otel-service-name }}
+
+      - name: Deploy Application
+        run: |
+          cd ~/app
+          git pull origin main
+          npm install
+          pm2 restart my-app || pm2 start server.js --name my-app
