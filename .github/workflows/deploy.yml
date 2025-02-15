@@ -27,6 +27,7 @@ jobs:
           job-status: ${{ job.status }}
           job-name: ${{ steps.setup-telemetry.outputs.job-name }}
           otel-exporter-otlp-endpoint: ${{ env.otel-exporter-otlp-endpoint }}
+          otel-exporter-otlp-insecure: "false"
           otel-resource-attributes: "foo.new_attribute=123,${{ env.otel-resource-attributes }}"
           otel-service-name: ${{ env.otel-service-name }}
           started-at: ${{ steps.setup-telemetry.outputs.started-at }}
