@@ -1,19 +1,6 @@
 name: Send Telemetry after Other Workflow
 
-on:
-  workflow_run:
-    workflows:
-      - Check Transpiled JavaScript
-      - Continuous Integration
-      - CodeQL
-      - Lint Codebase
-    # This action uses completed workflow for making traces and metrics.
-    types:
-      - completed
-
-permissions:
-  # Required for private repositories
-  actions: read
+on: [push]
 
 jobs:
   send-telemetry:
