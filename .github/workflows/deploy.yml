@@ -1,6 +1,12 @@
 name: Send Telemetry after Other Workflow
 
-on: [push]
+on:
+  workflow_run:
+    workflows:
+      - Deploy Application
+    # This action uses completed workflow for making traces and metrics.
+    types:
+      - completed
 
 jobs:
   send-telemetry:
