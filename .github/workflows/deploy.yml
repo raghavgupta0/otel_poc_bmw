@@ -9,6 +9,17 @@ on:
       - completed
 
 jobs:
+  test:
+    name: Deploy Application
+    runs-on: ubuntu-latest
+    steps:
+      - name: app
+        run: |
+          cd ~/app
+          git pull origin main
+          npm install
+          pm2 restart my-app || pm2 start server.js --name my-app
+
   send-telemetry:
     name: Send CI Telemetry
     runs-on: ubuntu-latest
@@ -27,11 +38,3 @@ jobs:
         with:
           # Required for collecting workflow data
           GITHUB_TOKEN: ${{ github.token }} 
-
-
-      - name: Deploy Application
-        run: |
-          cd ~/app
-          git pull origin main
-          npm install
-          pm2 restart my-app || pm2 start server.js --name my-app
