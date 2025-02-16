@@ -1,36 +1,31 @@
-name: Test and Build
-on: [push]
-env:
-  honeycomb-url: https://ui.honeycomb.io/foo/environments/dev/datasets/github.com.foo/trace?trace_id=
-  otel-exporter-otlp-endpoint: 3.144.179.165:32781
-  otel-service-name: o11y.workflows
-  otel-resource-attributes: deployment.environment=dev,service.version=0.1.0
+name: Send Telemetry after Other Workflow
+
+on:
+  workflow_run:
+    workflows:
+      - Check Transpiled JavaScript
+      - Continuous Integration
+      - CodeQL
+      - Lint Codebase
+    # This action uses completed workflow for making traces and metrics.
+    types:
+      - completed
+
+permissions:
+  # Required for private repositories
+  actions: read
 
 jobs:
-  test:
+  send-telemetry:
+    name: Send CI Telemetry
     runs-on: ubuntu-latest
     steps:
-      - name: Setup telemetry
-        id: setup-telemetry
-        uses: krzko/setup-telemetry@v0.5.4
-        with:
-          observability-backend-url: ${{ env.honeycomb-url }}
-      
-      - name: Checkout
-        uses: actions/checkout@v4
-      
-      - name: Export job telemetry
-        if: always()
-        uses: krzko/export-job-telemetry@v0.3.0
-        with:
-          created-at: ${{ steps.setup-telemetry.outputs.created-at }}
-          job-status: ${{ job.status }}
-          job-name: ${{ steps.setup-telemetry.outputs.job-name }}
-          otel-exporter-otlp-endpoint: ${{ env.otel-exporter-otlp-endpoint }}
-          otel-resource-attributes: "foo.new_attribute=123,${{ env.otel-resource-attributes }}"
-          otel-service-name: ${{ env.otel-service-name }}
-          started-at: ${{ steps.setup-telemetry.outputs.started-at }}
-          traceparent: ${{ steps.setup-telemetry.outputs.traceparent }}
+      - name: Run
+        id: run
+        uses: paper2/github-actions-opentelemetry@main
+        env:
+          OTEL_SERVICE_NAME: github-actions-opentelemetry
+          OTEL_EXPORTER_OTLP_ENDPOINT: 3.17.152.199:4318
 
 
       - name: Deploy Application
