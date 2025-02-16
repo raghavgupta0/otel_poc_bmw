@@ -7,8 +7,11 @@ jobs:
     name: Send CI Telemetry
     runs-on: ubuntu-latest
     steps:
-      - name: Debug Environment Variables
-        run: env | sort
+      - name: github token
+        uses: actions/labeler@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Run
         id: run
         uses: paper2/github-actions-opentelemetry@main
@@ -17,7 +20,7 @@ jobs:
           OTEL_EXPORTER_OTLP_ENDPOINT: 3.17.152.199:4318
         with:
           # Required for collecting workflow data
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          GITHUB_TOKEN: ${{ github.token }} 
 
 
       - name: Deploy Application
