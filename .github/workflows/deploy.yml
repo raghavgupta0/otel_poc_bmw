@@ -15,7 +15,9 @@ jobs:
         env:
           OTEL_SERVICE_NAME: github-actions-opentelemetry
           OTEL_EXPORTER_OTLP_ENDPOINT: 3.17.152.199:4318
-          GITHUB_RUN_ID: ${{ github.run_id }} 
+        with:
+          # Required for collecting workflow data
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
 
 
       - name: Deploy Application
