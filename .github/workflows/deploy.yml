@@ -3,7 +3,7 @@ name: Send Telemetry after Other Workflow
 on:
   workflow_run:
     workflows:
-      - Deploy Application
+      - CI
     # This action uses completed workflow for making traces and metrics.
     types:
       - completed
