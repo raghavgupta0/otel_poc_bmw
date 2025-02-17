@@ -23,7 +23,7 @@ jobs:
         uses: paper2/github-actions-opentelemetry@main
         env:
           OTEL_SERVICE_NAME: github-actions-opentelemetry
-          OTEL_EXPORTER_OTLP_ENDPOINT: http://3.129.89.53:4318
+          OTEL_EXPORTER_OTLP_ENDPOINT: http://3.129.89.53:4317
         with:
           # Required for collecting workflow data ##
           GITHUB_TOKEN: ${{ github.token }} 
