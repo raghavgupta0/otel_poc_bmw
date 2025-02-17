@@ -25,5 +25,5 @@ jobs:
           OTEL_SERVICE_NAME: github-actions-opentelemetry
           OTEL_EXPORTER_OTLP_ENDPOINT: 3.129.89.53:4318
         with:
-          # Required for collecting workflow data#
+          # Required for collecting workflow data #
           GITHUB_TOKEN: ${{ github.token }} 
