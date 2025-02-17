@@ -1,29 +1,18 @@
-name: CI with OpenTelemetry
+name: OpenTelemetry Export Trace
 
-on: [push]
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
 
 jobs:
-  build:
+  otel-export-trace:
+    name: OpenTelemetry Export Trace
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Run a command with OpenTelemetry
-        uses: krzko/run-with-telemetry@v0.4.3
+      - name: Export Workflow Trace
+        uses: inception-health/otel-export-trace-action@latest
         with:
-          otel-service-name: "o11y.workflows"
-          otel-exporter-otlp-endpoint: 3.129.89.53:4317
-          otel-exporter-otlp-insecure: "false"
-          otel-resource-attributes: "deployment.environment=dev,service.version=0.1.0"
-          step-name: "Build the project with telemetry"
-          run: npm run build  
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          job-as-parent: false
-
-      - name: Deploy Application
-        run: |
-          cd ~/app
-          git pull origin main
-          npm install
-          pm2 restart my-app || pm2 start server.js --name my-app
+          otlpEndpoint: 3.129.89.53:4317
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          runId: ${{ github.event.workflow_run.id }}
