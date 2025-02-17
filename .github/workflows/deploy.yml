@@ -16,7 +16,7 @@ jobs:
           otel-exporter-otlp-endpoint: 3.129.89.53:4318
           otel-resource-attributes: "deployment.environment=dev,service.version=0.1.0"
           step-name: "Run a single-line command with telemetry"
-          run: echo Hello, world!!
+          run: echo Hello, world!!!
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy Application
