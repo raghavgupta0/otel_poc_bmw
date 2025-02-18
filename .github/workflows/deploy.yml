@@ -3,6 +3,8 @@ name: Test and Build
 on:
   push:
 
+permissions: read-all
+
 env:
   honeycomb-url: https://ui.honeycomb.io/foo/environments/dev/datasets/github.com.foo/trace?trace_id=
   otel-exporter-otlp-endpoint: 18.218.236.254:443
@@ -15,11 +17,13 @@ jobs:
     steps:
       - name: Setup telemetry
         id: setup-telemetry
-        uses: krzko/setup-telemetry@v0.5.2
+        uses: krzko/setup-telemetry@v0.5.4
 
       - name: Checkout
         uses: actions/checkout@v4
 
+      - run: echo Hello
+      
       - name: Export job telemetry
         if: always()
         uses: krzko/export-job-telemetry@v0.3.0
@@ -38,12 +42,12 @@ jobs:
     steps:
       - name: Setup telemetry
         id: setup-telemetry
-        uses: krzko/setup-telemetry@v0.5.2
+        uses: krzko/setup-telemetry@v0.5.4
 
       - name: Checkout
         uses: actions/checkout@v4
 
-      - run: echo Hello
+      - run: echo hello
 
       - name: Export job telemetry
         if: always()
