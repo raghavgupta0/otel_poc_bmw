@@ -1,4 +1,4 @@
-name: Export OpenTelemetry Trace for CI
+name: Export otel Trace for CI
 
 on:
   workflow_run:
