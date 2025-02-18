@@ -47,7 +47,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - run: echo hello
+      - run: echo hello!!
 
       - name: Export job telemetry
         if: always()
