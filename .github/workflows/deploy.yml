@@ -1,63 +1,29 @@
-name: Test and Build
+name: Send Telemetry after Other Workflow
 
 on:
-  push:
-
-permissions: read-all
-
-env:
-  honeycomb-url: https://ui.honeycomb.io/foo/environments/dev/datasets/github.com.foo/trace?trace_id=
-  otel-exporter-otlp-endpoint: 18.218.236.254:4318
-  otel-service-name: o11y.workflows
-  otel-resource-attributes: deployment.environent=dev,service.version=0.1.0
+  workflow_run:
+    workflows:
+      - CI
+    # This action uses completed workflow for making traces and metrics.
+    types:
+      - completed
 
 jobs:
-  test:
+  send-telemetry:
+    name: Send CI Telemetry
     runs-on: ubuntu-latest
     steps:
-      - name: Setup telemetry
-        id: setup-telemetry
-        uses: krzko/setup-telemetry@v0.5.4
-
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - run: echo Hello!!
-      
-      - name: Export job telemetry
-        if: always()
-        uses: krzko/export-job-telemetry@v0.3.0
+      - name: github token
+        uses: actions/labeler@v2
         with:
-          created-at: ${{ steps.setup-telemetry.outputs.created-at }}
-          job-status: ${{ job.status }}
-          job-name: ${{ steps.setup-telemetry.outputs.job-name }}
-          otel-exporter-otlp-endpoint: ${{ env.otel-exporter-otlp-endpoint }}
-          otel-resource-attributes: "foo.new_attribute=123,${{ env.otel-resource-attributes }}"
-          otel-service-name: ${{ env.otel-service-name }}
-          started-at: ${{ steps.setup-telemetry.outputs.started-at }}
-          traceparent: ${{ steps.setup-telemetry.outputs.traceparent }}
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup telemetry
-        id: setup-telemetry
-        uses: krzko/setup-telemetry@v0.5.4
-
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - run: echo hello!!
-
-      - name: Export job telemetry
-        if: always()
-        uses: krzko/export-job-telemetry@v0.3.0
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Run
+        id: run
+        uses: paper2/github-actions-opentelemetry@main
+        env:
+          OTEL_SERVICE_NAME: github-actions-opentelemetry
+          OTEL_EXPORTER_OTLP_ENDPOINT: http://18.218.236.254:4318
         with:
-          created-at: ${{ steps.setup-telemetry.outputs.created-at }}
-          job-status: ${{ job.status }}
-          job-name: ${{ steps.setup-telemetry.outputs.job-name }}
-          otel-exporter-otlp-endpoint: ${{ env.otel-exporter-otlp-endpoint }}
-          otel-resource-attributes: "foo.new_attribute=123,${{ env.otel-resource-attributes }}"
-          otel-service-name: ${{ env.otel-service-name }}
-          started-at: ${{ steps.setup-telemetry.outputs.started-at }}
-          traceparent: ${{ steps.setup-telemetry.outputs.traceparent }}
+          # Required for collecting workflow data ##
+          GITHUB_TOKEN: ${{ github.token }} 
