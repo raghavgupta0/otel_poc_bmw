@@ -1,8 +1,9 @@
-name: OpenTelemetry Export Trace
+name: Export OpenTelemetry Trace for CI
 
 on:
   workflow_run:
-    workflows: [CI]
+    workflows:
+      - CI
     types: [completed]
 
 jobs:
@@ -11,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Export Workflow Trace
-        uses: inception-health/otel-export-trace-action@latest
+        uses: corentinmusard/otel-cicd-action@v1
         with:
-          otlpEndpoint: 3.15.165.38:4318/v1/traces
+          otlpEndpoint: 3.131.35.251:4318
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           runId: ${{ github.event.workflow_run.id }}
