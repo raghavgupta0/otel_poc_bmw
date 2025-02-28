@@ -1,19 +1,29 @@
-name: Export OpenTelemetry Trace for CI
+name: Send Telemetry after Other Workflow
 
 on:
   workflow_run:
     workflows:
       - CI
-    types: [completed]
+    # This action uses completed workflow for making traces and metrics.
+    types:
+      - completed
 
 jobs:
-  otel-export-trace:
-    name: OpenTelemetry Export Trace
+  send-telemetry:
+    name: Send CI Telemetry
     runs-on: ubuntu-latest
     steps:
-      - name: Export Workflow Trace
-        uses: corentinmusard/otel-cicd-action@v1
+      - name: github token
+        uses: actions/labeler@v2
         with:
-          otlpEndpoint: http://3.131.35.251:4318/v1/traces
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-          runId: ${{ github.event.workflow_run.id }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Run
+        id: run
+        uses: paper2/github-actions-opentelemetry@main
+        env:
+          OTEL_SERVICE_NAME: github-actions-opentelemetry
+          OTEL_EXPORTER_OTLP_ENDPOINT: http://3.131.35.251:4318
+        with:
+          # Required for collecting workflow data ##
+          GITHUB_TOKEN: ${{ github.token }} 
