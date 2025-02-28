@@ -4,7 +4,7 @@ on:
   workflow_run:
     workflows:
       - CI
-    # This action uses completed workflow for making traces and metrics.
+    # This action uses completed workflow for making traces and metrics
     types:
       - completed
 
