@@ -14,6 +14,6 @@ jobs:
       - name: Export Workflow Trace
         uses: corentinmusard/otel-cicd-action@v1
         with:
-          otlpEndpoint: http://3.131.35.251:4318
+          otlpEndpoint: http://3.131.35.251:4318/v1/traces
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           runId: ${{ github.event.workflow_run.id }}
