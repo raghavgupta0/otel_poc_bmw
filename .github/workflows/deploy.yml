@@ -13,6 +13,6 @@ jobs:
       - name: Export Workflow Trace
         uses: inception-health/otel-export-trace-action@latest
         with:
-          otlpEndpoint: http://3.15.165.38:4318/v1/traces
+          otlpEndpoint: 3.15.165.38:4318/v1/traces
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           runId: ${{ github.event.workflow_run.id }}
